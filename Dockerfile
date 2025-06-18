@@ -11,8 +11,11 @@ RUN apk add --no-cache python3 make g++
 # Establecer directorio de trabajo
 WORKDIR /app
 
-# Copiar package files primero para mejor caching
-COPY package*.json ./
+# Instalar git para clonar el repositorio
+RUN apk add --no-cache git
+
+# Clonar el repositorio del proyecto
+RUN git clone https://github.com/DylanQL/suyay-events-frontend.git .
 
 # Verificar que npm está funcionando
 RUN npm --version
@@ -22,9 +25,6 @@ RUN npm config set registry https://registry.npmjs.org/ && \
     npm install --no-fund --no-audit || \
     npm install || \
     npm ci
-
-# Copiar el resto de archivos
-COPY . .
 
 # Limpiar cache de npm para reducir tamaño
 RUN npm cache clean --force

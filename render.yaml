@@ -8,7 +8,7 @@ services:
     runtime: docker
     plan: free  # Cambia a 'starter' o 'standard' según necesites
     region: ohio  # Cambia según tu ubicación    # Build settings
-    dockerfilePath: ./Dockerfile.simple
+    dockerfilePath: ./Dockerfile
     dockerContext: ./
     rootDir: ./
     
