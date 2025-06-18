@@ -17,8 +17,11 @@ COPY package*.json ./
 # Verificar que npm está funcionando
 RUN npm --version
 
-# Instalar dependencias (usar npm install en lugar de ci para mayor compatibilidad)
-RUN npm install --production --silent || npm install --silent
+# Instalar dependencias (con más opciones de fallback)
+RUN npm config set registry https://registry.npmjs.org/ && \
+    npm install --no-fund --no-audit || \
+    npm install || \
+    npm ci
 
 # Copiar el resto de archivos
 COPY . .

@@ -7,9 +7,8 @@ services:
     name: suyay-events-frontend
     runtime: docker
     plan: free  # Cambia a 'starter' o 'standard' según necesites
-    region: ohio  # Cambia según tu ubicación
-      # Build settings
-    dockerfilePath: ./Dockerfile
+    region: ohio  # Cambia según tu ubicación    # Build settings
+    dockerfilePath: ./Dockerfile.simple
     dockerContext: ./
     rootDir: ./
     

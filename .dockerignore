@@ -48,10 +48,10 @@ protractor.conf.js
 .gitignore
 .gitattributes
 
-# Docker
-Dockerfile
-.dockerignore
-docker-compose*
+# Docker (comentado para permitir despliegue en Render)
+# Dockerfile
+# .dockerignore
+# docker-compose*
 
 # CI/CD
 .github
@@ -65,5 +65,5 @@ docs
 tmp
 temp
 
-# Render específico
-render.yaml
+# Render específico (comentado para permitir despliegue en Render)
+# render.yaml
