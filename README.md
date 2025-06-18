@@ -166,6 +166,34 @@ Si tu aplicación necesita conectarse a un backend, actualiza la configuración 
 
 ## 🐛 Troubleshooting
 
+### Error: "npm ci --silent did not complete successfully: exit code: 1"
+Este error indica problemas con la instalación de dependencias npm:
+
+**Soluciones:**
+
+1. **Usar Dockerfile simplificado:**
+   - Renombra `Dockerfile` a `Dockerfile.backup`
+   - Renombra `Dockerfile.simple` a `Dockerfile`
+
+2. **O modificar package.json en tu proyecto Angular:**
+   ```json
+   {
+     "engines": {
+       "node": ">=18.0.0",
+       "npm": ">=8.0.0"
+     }
+   }
+   ```
+
+3. **Verificar package-lock.json:**
+   - Elimina `package-lock.json` si existe
+   - Deja que Docker regenere las dependencias
+
+4. **Si persiste el error, usa build estático en Render:**
+   - En lugar de Docker, usa "Static Site"
+   - Build Command: `npm install && ng build --configuration=production`
+   - Publish Directory: `dist/suyay-events-frontend`
+
 ### Error: "failed to calculate checksum" o "not found"
 Este error ocurre cuando los archivos no están en el contexto correcto:
 

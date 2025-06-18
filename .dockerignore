@@ -49,6 +49,7 @@ protractor.conf.js
 .gitattributes
 
 # Docker
+Dockerfile
 .dockerignore
 docker-compose*
 

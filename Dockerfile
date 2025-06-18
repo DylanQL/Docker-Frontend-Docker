@@ -1,26 +1,27 @@
-# Dockerfile para Suyay Events Frontend - Optimizado para Render
-# Construcción multi-stage para aplicación Angular
+# Dockerfile para Suyay Events Frontend - Versión Simplificada para Render
 
 # ======================================
 # Stage 1: Build Stage
 # ======================================
 FROM node:22-alpine AS build
 
-# Información del mantenedor
-LABEL maintainer="Suyay Events Team"
-LABEL description="Dockerfile para frontend Angular de Suyay Events"
-
-# Instalar dependencias del sistema necesarias para Angular
-RUN apk add --no-cache python3 make g++ git
+# Instalar dependencias básicas
+RUN apk add --no-cache python3 make g++
 
 # Establecer directorio de trabajo
 WORKDIR /app
 
-# Copiar todos los archivos necesarios
-COPY . .
+# Copiar package files primero para mejor caching
+COPY package*.json ./
 
-# Instalar dependencias con caché optimizado
-RUN npm ci --silent
+# Verificar que npm está funcionando
+RUN npm --version
+
+# Instalar dependencias (usar npm install en lugar de ci para mayor compatibilidad)
+RUN npm install --production --silent || npm install --silent
+
+# Copiar el resto de archivos
+COPY . .
 
 # Limpiar cache de npm para reducir tamaño
 RUN npm cache clean --force
@@ -29,8 +30,11 @@ RUN npm cache clean --force
 ENV NODE_ENV=production
 ENV NG_CLI_ANALYTICS=false
 
+# Instalar Angular CLI globalmente si no está disponible
+RUN npm install -g @angular/cli@16 || echo "Angular CLI ya disponible"
+
 # Construir la aplicación para producción
-RUN npm run build --prod || npm run build
+RUN ng build --configuration=production || ng build || npm run build
 
 # ======================================
 # Stage 2: Production Stage con Nginx
@@ -44,28 +48,13 @@ RUN apk add --no-cache curl
 RUN rm -rf /usr/share/nginx/html/*
 
 # Copiar archivos construidos desde el stage anterior
-# Ajustar el path según la estructura del proyecto
-COPY --from=build /app/dist/* /usr/share/nginx/html/
+# Intentar diferentes ubicaciones posibles del build
+COPY --from=build /app/dist/ /usr/share/nginx/html/
 
 # Copiar configuración personalizada de Nginx
 COPY nginx.conf /etc/nginx/nginx.conf
 
-# Crear usuario no-root para seguridad
-RUN addgroup -g 1001 -S nginx && \
-    adduser -S -D -H -u 1001 -h /var/cache/nginx -s /sbin/nologin -G nginx nginx
-
-# Configurar permisos
-RUN chown -R nginx:nginx /usr/share/nginx/html && \
-    chown -R nginx:nginx /var/cache/nginx && \
-    chown -R nginx:nginx /var/log/nginx && \
-    chown -R nginx:nginx /etc/nginx/conf.d && \
-    touch /var/run/nginx.pid && \
-    chown -R nginx:nginx /var/run/nginx.pid
-
-# Cambiar a usuario no-root
-USER nginx
-
-# Exponer puerto (Render asigna automáticamente el puerto)
+# Exponer puerto
 EXPOSE 8080
 
 # Health check

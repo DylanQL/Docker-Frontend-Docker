@@ -1,0 +1,31 @@
+# Dockerfile Simple para Suyay Events Frontend
+# Usar solo si el Dockerfile principal falla
+
+FROM node:22-alpine
+
+# Instalar dependencias básicas
+RUN apk add --no-cache python3 make g++
+
+# Crear directorio de trabajo
+WORKDIR /app
+
+# Copiar archivos del proyecto
+COPY . .
+
+# Instalar dependencias
+RUN npm install
+
+# Instalar Angular CLI
+RUN npm install -g @angular/cli@16
+
+# Build del proyecto
+RUN ng build --configuration=production
+
+# Instalar servidor HTTP simple
+RUN npm install -g http-server
+
+# Exponer puerto
+EXPOSE 8080
+
+# Comando para servir la aplicación
+CMD ["http-server", "dist", "-p", "8080", "-a", "0.0.0.0", "--proxy", "http://localhost:8080?"]
