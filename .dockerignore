@@ -1,0 +1,73 @@
+# Dockerignore para Suyay Events Frontend
+
+# Dependencias
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Archivos de build
+dist
+build
+.angular
+
+# Archivos de desarrollo
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory usado por herramientas como istanbul
+coverage
+.nyc_output
+
+# Archivos de configuración local
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Archivos de test
+*.spec.ts
+*.spec.js
+e2e
+
+# Git
+.git
+.gitignore
+README.md
+.gitattributes
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose*
+
+# CI/CD
+.github
+.gitlab-ci.yml
+azure-pipelines.yml
+
+# Documentación
+docs
+*.md
+
+# Archivos temporales
+tmp
+temp

@@ -1,0 +1,55 @@
+# Docker Compose para Suyay Events Frontend
+# Para desarrollo y testing local
+
+version: '3.8'
+
+services:
+  suyay-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: suyay-events-frontend
+    ports:
+      - "8080:8080"
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - suyay-network
+
+  # Servicio opcional para desarrollo con hot reload
+  suyay-frontend-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev  # Crear este archivo si necesitas desarrollo
+      target: development
+    container_name: suyay-events-frontend-dev
+    ports:
+      - "4200:4200"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+    command: npm start
+    profiles:
+      - dev
+    networks:
+      - suyay-network
+
+networks:
+  suyay-network:
+    driver: bridge
+
+# Volumes para persistencia si es necesario
+volumes:
+  nginx_cache:
+    driver: local

@@ -1,0 +1,72 @@
+# Configuración de Render para Suyay Events Frontend
+# Este archivo automatiza el deployment en Render
+
+services:
+  # Servicio web principal
+  - type: web
+    name: suyay-events-frontend
+    runtime: docker
+    plan: free  # Cambia a 'starter' o 'standard' según necesites
+    region: ohio  # Cambia según tu ubicación
+    
+    # Build settings
+    dockerfilePath: ./Dockerfile
+    dockerContext: ./
+    
+    # Environment variables
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 8080
+      # Agrega aquí variables adicionales como API_URL si las necesitas
+      # - key: API_URL
+      #   value: https://tu-backend.render.com/api
+    
+    # Health check
+    healthCheckPath: /health
+    
+    # Auto-deploy settings
+    autoDeploy: true
+    branch: main  # Cambia por tu rama principal
+    
+    # Disk space (solo en planes pagados)
+    # disk:
+    #   name: suyay-data
+    #   mountPath: /data
+    #   sizeGB: 1
+
+# Static site alternativo (si prefieres no usar Docker)
+# Comentado por defecto - descomenta si prefieres esta opción
+#  - type: static_site
+#    name: suyay-events-static
+#    buildCommand: npm install && npm run build
+#    publishPath: ./dist/suyay-events-frontend
+#    pullRequestPreviewsEnabled: true
+#    
+#    envVars:
+#      - key: NODE_VERSION
+#        value: 22.16.0
+#      - key: NPM_VERSION  
+#        value: latest
+#    
+#    headers:
+#      - path: /*
+#        name: Cache-Control
+#        value: public, max-age=3600
+#      - path: /static/*
+#        name: Cache-Control
+#        value: public, max-age=31536000, immutable
+
+# Base de datos (si necesitas una en el futuro)
+# databases:
+#   - name: suyay-postgres
+#     databaseName: suyay_db
+#     user: suyay_user
+#     plan: free  # 90 días gratis, luego $7/mes
+
+# Redis cache (si necesitas cache en el futuro)
+# - type: redis
+#   name: suyay-cache
+#   plan: free  # 30 días gratis, luego $10/mes
+#   maxmemoryPolicy: allkeys-lru
