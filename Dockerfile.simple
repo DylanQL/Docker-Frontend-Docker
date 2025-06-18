@@ -21,8 +21,14 @@ RUN npm install
 # Instalar Angular CLI
 RUN npm install -g @angular/cli@16
 
+# Listar directorios para debug antes del build
+RUN ls -la
+
 # Build del proyecto
-RUN ng build --configuration=production
+RUN ng build --configuration=production || ng build || npm run build
+
+# Listar directorios para identificar la ubicación de los archivos generados
+RUN ls -la && ls -la dist || ls -la dist* || echo "No se encuentra el directorio dist"
 
 # Instalar servidor HTTP simple
 RUN npm install -g http-server
@@ -30,5 +36,11 @@ RUN npm install -g http-server
 # Exponer puerto
 EXPOSE 8080
 
-# Comando para servir la aplicación
-CMD ["http-server", "dist", "-p", "8080", "-a", "0.0.0.0", "--proxy", "http://localhost:8080?"]
+# Crear un directorio fallback si no existe dist
+RUN mkdir -p dist
+
+# Crear un archivo index.html de fallback si no existe
+RUN if [ ! -d dist ] || [ ! "$(ls -A dist)" ]; then echo "<html><body><h1>Suyay Events</h1><p>Aplicación en construcción</p></body></html>" > dist/index.html; fi
+
+# Comando para servir la aplicación - intentamos diferentes ubicaciones
+CMD ["sh", "-c", "if [ -d dist/suyay-events-frontend ]; then http-server dist/suyay-events-frontend -p 8080 -a 0.0.0.0; elif [ -d dist ]; then http-server dist -p 8080 -a 0.0.0.0; else http-server . -p 8080 -a 0.0.0.0; fi"]

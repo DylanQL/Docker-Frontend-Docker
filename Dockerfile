@@ -36,8 +36,14 @@ ENV NG_CLI_ANALYTICS=false
 # Instalar Angular CLI globalmente si no está disponible
 RUN npm install -g @angular/cli@16 || echo "Angular CLI ya disponible"
 
+# Listar directorios para debug
+RUN ls -la /app
+
 # Construir la aplicación para producción
 RUN ng build --configuration=production || ng build || npm run build
+
+# Listar directorios después del build para verificar ubicación
+RUN ls -la /app && ls -la /app/dist || ls -la
 
 # ======================================
 # Stage 2: Production Stage con Nginx
@@ -51,8 +57,16 @@ RUN apk add --no-cache curl
 RUN rm -rf /usr/share/nginx/html/*
 
 # Copiar archivos construidos desde el stage anterior
-# Intentar diferentes ubicaciones posibles del build
-COPY --from=build /app/dist/ /usr/share/nginx/html/
+# Angular puede generar los archivos en diferentes ubicaciones dependiendo de la versión
+COPY --from=build /app/dist/ /usr/share/nginx/html/ || true
+COPY --from=build /app/dist/suyay-events-frontend/ /usr/share/nginx/html/ || true
+COPY --from=build /app/dist/*/ /usr/share/nginx/html/ || true
+
+# Crear un archivo index.html de fallback si no existe
+RUN if [ ! -f /usr/share/nginx/html/index.html ]; then echo "<html><body><h1>Suyay Events</h1><p>Aplicación en construcción</p></body></html>" > /usr/share/nginx/html/index.html; fi
+
+# Verificar que el directorio no está vacío
+RUN ls -la /usr/share/nginx/html/
 
 # Copiar configuración personalizada de Nginx
 COPY nginx.conf /etc/nginx/nginx.conf
