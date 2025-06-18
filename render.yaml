@@ -8,10 +8,13 @@ services:
     runtime: docker
     plan: free  # Cambia a 'starter' o 'standard' según necesites
     region: ohio  # Cambia según tu ubicación
-    
-    # Build settings
+      # Build settings
     dockerfilePath: ./Dockerfile
     dockerContext: ./
+    rootDir: ./
+    
+    # Build command personalizado (opcional)
+    # buildCommand: docker build -t suyay-frontend .
     
     # Environment variables
     envVars:

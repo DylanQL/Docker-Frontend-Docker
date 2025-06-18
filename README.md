@@ -137,7 +137,56 @@ Si tu aplicación necesita conectarse a un backend, actualiza la configuración 
 - **Cold start**: ~10-15 segundos
 - **Memoria RAM**: ~50-100MB
 
+## 🔧 Configuración Importante
+
+### Antes de hacer el deploy:
+
+1. **Copia estos archivos a la raíz de tu proyecto Angular:**
+   ```
+   tu-proyecto-angular/
+   ├── src/                    # Tu código Angular existente
+   ├── package.json           # Tu package.json existente
+   ├── angular.json           # Tu angular.json existente
+   ├── Dockerfile             # ⭐ Copia este archivo aquí
+   ├── nginx.conf             # ⭐ Copia este archivo aquí
+   ├── .dockerignore          # ⭐ Copia este archivo aquí
+   ├── render.yaml            # ⭐ Copia este archivo aquí (opcional)
+   └── README.md              # Este archivo (opcional)
+   ```
+
+2. **Verifica que tu package.json tiene el script de build:**
+   ```json
+   {
+     "scripts": {
+       "build": "ng build",
+       "build:prod": "ng build --configuration production"
+     }
+   }
+   ```
+
 ## 🐛 Troubleshooting
+
+### Error: "failed to calculate checksum" o "not found"
+Este error ocurre cuando los archivos no están en el contexto correcto:
+
+**Solución:**
+1. Asegúrate de que todos los archivos Docker estén en la raíz de tu proyecto Angular
+2. Verifica que tengas estos archivos en tu proyecto:
+   - `package.json`
+   - `angular.json` 
+   - `src/` (directorio)
+   - `tsconfig.json`
+
+```bash
+# Estructura correcta:
+suyay-events-frontend/
+├── src/                    # ✅ Debe existir
+├── package.json           # ✅ Debe existir  
+├── angular.json           # ✅ Debe existir
+├── Dockerfile             # ✅ Copiar aquí
+├── nginx.conf             # ✅ Copiar aquí
+└── .dockerignore          # ✅ Copiar aquí
+```
 
 ### Error: "Application failed to start"
 ```bash
@@ -157,6 +206,11 @@ docker logs container-name
 ### Error de CORS
 - Actualiza los headers CORS en nginx.conf
 - Verifica la URL del backend en environment.ts
+
+### Errores Comunes de Build
+- Asegúrate de que todas las dependencias están correctamente instaladas.
+- Verifica que no hay errores en el código fuente de Angular.
+- Confirma que el Dockerfile está en la raíz del proyecto y es accesible.
 
 ## 📞 Soporte
 
